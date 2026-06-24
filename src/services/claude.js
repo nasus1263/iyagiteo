@@ -1,7 +1,7 @@
 // Claude Haiku 호출 (브라우저 직접). 백엔드 없음 → x-api-key + 브라우저 직접 호출 헤더.
 // 하이브리드: xlsx 여행지 정보(개요 등 고정 근거)를 넣고 관심사 톤에 맞춰 대본만 실시간 생성.
 import { getAnthropicKey, CLAUDE_MODEL } from '../config.js'
-import { PLACES } from '../data/places.js'
+import { repPlaces } from '../data/representative.js'
 
 const API_URL = 'https://api.anthropic.com/v1/messages'
 
@@ -76,7 +76,7 @@ export async function generateStory({ place, interest, extraPrompt }) {
 
 // 프롬프트로 동선 초안 생성 → 관광지 중 placeIds 배열.
 export async function generateRouteDraft({ prompt, interest }) {
-  const pool = PLACES.filter((p) => p.category === '관광지')
+  const pool = repPlaces(interest.id)
   const allowed = pool.map((p) => `${p.id}: ${p.name}`).join('\n')
   const system = [
     '너는 전주 여행 동선 설계자다.',

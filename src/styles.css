@@ -363,6 +363,51 @@ body {
 .sstamp .nm { font-family: 'Gowun Batang', serif; font-size: 13px; font-weight: 700; line-height: 1.1; }
 .empty { text-align: center; color: var(--ink-soft); padding: 12px 30px; font-size: 13px; line-height: 1.7; }
 
+/* 흥미 드롭다운 */
+.stamp-filter { display: flex; align-items: center; gap: 10px; padding: 2px 20px 10px; }
+.stamp-filter label { font-size: 13px; font-weight: 700; color: var(--cheong-deep); }
+.stamp-filter select {
+  flex: 1; font: inherit; font-size: 14px; padding: 9px 12px; border: 1.5px solid var(--line);
+  border-radius: 12px; background: var(--surface); color: var(--ink); cursor: pointer;
+}
+
+/* 명예시민증 (div.reward 포팅) */
+.reward { padding: 6px 20px 22px; }
+.reward.locked .cert { filter: grayscale(0.85); opacity: 0.6; }
+.cert {
+  position: relative; border-radius: 20px; overflow: hidden;
+  background: linear-gradient(rgba(252, 248, 240, 0.9), rgba(248, 241, 226, 0.95)), var(--grain);
+  background-size: cover, 200px 200px;
+  border: 2px solid #c9a24b; box-shadow: 0 18px 34px -18px rgba(120, 90, 30, 0.6);
+}
+.cert::after { content: ''; position: absolute; inset: 6px; border: 1px solid rgba(178, 58, 44, 0.45); border-radius: 14px; pointer-events: none; }
+.cert-strip { height: 7px; background: linear-gradient(90deg, var(--cheong) 0 25%, var(--dancheong) 25% 50%, var(--brass) 50% 75%, var(--cheong-deep) 75% 100%); }
+.cert-body { padding: 16px 18px 14px; position: relative; }
+.cert-masc { position: absolute; right: 10px; top: 8px; width: 52px; height: 52px; opacity: 0.95; }
+.cert-head { display: flex; align-items: center; gap: 11px; margin-bottom: 10px; }
+.cert-emblem {
+  width: 46px; height: 46px; border-radius: 50%; background: var(--dancheong); color: #fff;
+  font-family: 'Gowun Batang', serif; font-size: 21px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  box-shadow: 0 6px 14px -6px rgba(194, 70, 50, 0.8); position: relative;
+}
+.cert-emblem::after { content: ''; position: absolute; inset: 5px; border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 50%; }
+.cert-kicker { font-size: 11px; letter-spacing: 0.1em; color: var(--cheong-deep); font-weight: 700; }
+.cert-title { font-family: 'Gowun Batang', serif; font-size: 24px; font-weight: 700; color: var(--ink); line-height: 1.1; margin-top: 1px; }
+.cert-name { font-size: 14px; margin: 4px 0 2px; }
+.cert-name b { font-family: 'Gowun Batang', serif; font-size: 17px; color: var(--dancheong); }
+.cert-line { font-size: 11.5px; color: var(--ink-soft); line-height: 1.65; margin-bottom: 12px; }
+.cert-seals { display: flex; gap: 6px; flex-wrap: wrap; background: rgba(255, 255, 255, 0.4); border: 1px solid #e4d3ae; border-radius: 12px; padding: 9px 10px; }
+.cseal {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Gowun Batang', serif; font-size: 13px; font-weight: 700;
+  border: 1.5px dashed #cbb78c; color: #b09a6a; background: #fff;
+}
+.cseal.on { border: 2px solid var(--dancheong); color: #fff; background: var(--dancheong); box-shadow: 0 4px 10px -5px rgba(194, 70, 50, 0.7); }
+.cert-foot { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--ink-soft); margin-top: 11px; }
+.cert-lockbar { text-align: center; font-size: 12px; color: var(--ink-soft); margin-top: 10px; }
+
 /* ---------- settings ---------- */
 .field { margin: 0 20px 18px; display: flex; flex-direction: column; gap: 6px; }
 .field label { font-size: 14px; font-weight: 600; }
