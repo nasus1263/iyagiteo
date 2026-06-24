@@ -177,10 +177,13 @@ body {
 .place:active { transform: scale(0.98); }
 .place .thumb {
   width: 54px; height: 54px; border-radius: 13px; flex-shrink: 0; overflow: hidden;
-  display: flex; align-items: center; justify-content: center; font-size: 24px;
+  position: relative;
   background: linear-gradient(160deg, #fbf5e8, #efe3c9); border: 1px solid var(--line);
 }
-.place .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.place .thumb .thumb-fallback {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 24px;
+}
+.place .thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .place .info { flex: 1; min-width: 0; }
 .place .info .nm { font-size: 15.5px; font-weight: 700; font-family: 'Gowun Batang', serif; }
 .place .info .ds { font-size: 12px; color: var(--ink-soft); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

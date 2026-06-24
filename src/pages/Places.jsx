@@ -28,12 +28,11 @@ export default function Places() {
         {PLACES.map((p) => (
           <div className="place" key={p.id}>
             <div className="thumb">
+              <span className="thumb-fallback">🏯</span>
               <img
                 src={p.image}
                 alt={p.name}
-                onError={(e) => {
-                  e.currentTarget.replaceWith(document.createTextNode('🏯'))
-                }}
+                onError={(e) => (e.currentTarget.style.display = 'none')}
               />
             </div>
             <div className="info">
