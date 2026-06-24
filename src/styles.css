@@ -239,7 +239,7 @@ body {
 
 /* ---------- trip edit ---------- */
 .edit-map { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); margin: 0 20px 14px; }
-.page h3 { padding: 0 20px; font-size: 16px; margin: 10px 0 6px; }
+.page > h3 { padding: 0 20px; font-size: 16px; margin: 10px 0 6px; }
 .point-list { list-style: none; padding: 0 20px; margin: 6px 0 16px; }
 .point-list li { display: flex; align-items: center; gap: 11px; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .point-list .pt-thumb {
