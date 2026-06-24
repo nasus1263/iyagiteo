@@ -28,7 +28,9 @@ npm run dev
 2. 앱 실행 후 하단 **설정** 탭에서 입력 (localStorage 저장)
 
 - **Kakao 키 없음** → 지도 자리에 안내 문구 (나머지 기능은 동작)
-- **Anthropic 키 없음** → 사료 기반 폴백 대본 사용
+- **Anthropic 키 없음** → 자료 기반 폴백 대본 사용
+- **Google Places(New) 키 없음** → 여행지 사진 대신 카테고리 이모지 표시
+  - Places API (New) 활성화 + HTTP referrer 제한(localhost·Pages 도메인) 권장. 사진은 장소명 텍스트 검색(+좌표 bias)으로 조회, photoName을 localStorage에 캐시.
 
 > 백엔드가 없어 API 키가 브라우저에 노출된다. **프로토타입 한정**이며 실서비스 시 서버 프록시 필요.
 

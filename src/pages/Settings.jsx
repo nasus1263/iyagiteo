@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import {
   getKakaoKey,
   getAnthropicKey,
+  getGoogleKey,
   setKakaoKey,
   setAnthropicKey,
+  setGoogleKey,
 } from '../config.js'
 import { ttsSupported } from '../services/tts.js'
 import { useStore } from '../store.jsx'
@@ -14,11 +16,13 @@ export default function Settings() {
   const { setInterest } = useStore()
   const [kakao, setKakao] = useState(getKakaoKey())
   const [anthropic, setAnthropic] = useState(getAnthropicKey())
+  const [google, setGoogle] = useState(getGoogleKey())
   const [saved, setSaved] = useState(false)
 
   function save() {
     setKakaoKey(kakao)
     setAnthropicKey(anthropic)
+    setGoogleKey(google)
     setSaved(true)
     setTimeout(() => setSaved(false), 1500)
   }
@@ -47,6 +51,17 @@ export default function Settings() {
           placeholder="sk-ant-..."
         />
         <small>AI 이야기 생성에 필요. 비우면 사료 기반 폴백 대본 사용. 브라우저에 저장됨(프로토타입 한정).</small>
+      </div>
+
+      <div className="field">
+        <label>Google Places API (New) 키</label>
+        <input
+          type="password"
+          value={google}
+          onChange={(e) => setGoogle(e.target.value)}
+          placeholder="AIza..."
+        />
+        <small>여행지 사진에 사용. Places API (New) 활성화 + 웹사이트 도메인 referrer 허용 필요.</small>
       </div>
 
       <button className="btn-primary" onClick={save}>저장</button>

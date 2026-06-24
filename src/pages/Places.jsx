@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { PLACES, CATEGORIES, categoryEmoji } from '../data/places.js'
 import { interestById } from '../data/interests.js'
 import { useStore } from '../store.jsx'
+import PlacePhoto from '../components/PlacePhoto.jsx'
 
 // 값 안의 <br>/줄바꿈을 보존해 표시
 function fieldText(v) {
@@ -43,7 +44,7 @@ export default function Places() {
                 return (
                   <div className="place-wrap" key={p.id}>
                     <button className={`place ${expanded ? 'open' : ''}`} onClick={() => setOpen(expanded ? null : p.id)}>
-                      <div className="thumb"><span className="thumb-fallback">{categoryEmoji(p.category)}</span></div>
+                      <div className="thumb"><PlacePhoto place={p} px={120} className="thumb-img" /></div>
                       <div className="info">
                         <div className="nm">{p.name}</div>
                         <div className="ds">{p.summary}</div>

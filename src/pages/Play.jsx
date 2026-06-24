@@ -7,6 +7,7 @@ import { STAMP_RADIUS_M } from '../config.js'
 import { distanceM, watchPosition } from '../services/geo.js'
 import { speak, stopSpeak, ttsSupported } from '../services/tts.js'
 import KakaoMap from '../components/KakaoMap.jsx'
+import PlacePhoto from '../components/PlacePhoto.jsx'
 
 const WAVE_BARS = 28
 const fmt = (sec) => {
@@ -200,6 +201,7 @@ export default function Play() {
           {place && (
             <>
               <div className="player">
+                <PlacePhoto place={place} px={720} className="pl-photo" emojiClassName="pl-photo-emoji" />
                 <span className="verified">
                   ✓ {point.story?.generatedByAI ? 'AI 생성 · 자료 기반' : '자료 기반'}
                 </span>

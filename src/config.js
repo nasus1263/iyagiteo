@@ -17,12 +17,24 @@ export function getAnthropicKey() {
   )
 }
 
+export function getGoogleKey() {
+  return (
+    localStorage.getItem('iyagiteo.googleKey') ||
+    import.meta.env.VITE_GOOGLE_PLACES_KEY ||
+    ''
+  )
+}
+
 export function setKakaoKey(v) {
   localStorage.setItem('iyagiteo.kakaoKey', v.trim())
 }
 
 export function setAnthropicKey(v) {
   localStorage.setItem('iyagiteo.anthropicKey', v.trim())
+}
+
+export function setGoogleKey(v) {
+  localStorage.setItem('iyagiteo.googleKey', v.trim())
 }
 
 // 스탬프/도착 판정 반경 (m) — 기획 결정값

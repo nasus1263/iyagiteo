@@ -5,6 +5,7 @@ import { PLACES, placeById } from '../data/places.js'
 import { interestById } from '../data/interests.js'
 import { generateStory } from '../services/claude.js'
 import KakaoMap from '../components/KakaoMap.jsx'
+import PlacePhoto from '../components/PlacePhoto.jsx'
 
 export default function TripEdit() {
   const { tripId } = useParams()
@@ -64,9 +65,10 @@ export default function TripEdit() {
           const pl = placeById(p.placeId)
           return (
             <li key={p.id}>
-              <div>
+              <div className="pt-thumb"><PlacePhoto place={pl} px={96} className="thumb-img" /></div>
+              <div className="pt-info">
                 <b>{pl.name}</b>
-                {p.story && <span className="badge">{p.story.generatedByAI ? 'AI' : '사료'} 이야기</span>}
+                {p.story && <span className="badge">{p.story.generatedByAI ? 'AI' : '자료'} 이야기</span>}
               </div>
               <button className="btn-ghost danger" onClick={() => removePoint(trip.id, p.id)}>제거</button>
             </li>
