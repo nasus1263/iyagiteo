@@ -8,24 +8,37 @@ export default function Places() {
 
   return (
     <div className="page">
-      <h2 className="page-title">전주 한옥마을 여행지</h2>
-      {interest && (
-        <p className="page-hint">
-          현재 관심사: <b>{interest.emoji} {interest.label}</b>
-        </p>
-      )}
-      <div className="place-list">
+      <div className="topbar">
+        <div className="hi">
+          전주 한옥마을
+          <small>같은 장소, 당신의 관심사로 다시 듣기</small>
+        </div>
+        <div className="chips">
+          {interest && <span className="chip">{interest.emoji} {interest.label}</span>}
+          <span className="chip">⏱ {state.durationMin}분</span>
+        </div>
+      </div>
+
+      <div className="sec-h"><h3>여행지</h3></div>
+      <div className="places">
         {PLACES.map((p) => (
-          <div className="place-card" key={p.id}>
-            <img
-              src={p.image}
-              alt={p.name}
-              onError={(e) => (e.currentTarget.style.visibility = 'hidden')}
-            />
-            <div className="place-body">
-              <h3>{p.name}</h3>
-              <p>{p.summary}</p>
-              <span className="coord">{p.lat.toFixed(4)}, {p.lng.toFixed(4)}</span>
+          <div className="place" key={p.id}>
+            <div className="thumb">
+              <img
+                src={p.image}
+                alt={p.name}
+                onError={(e) => {
+                  e.currentTarget.replaceWith(document.createTextNode('🏯'))
+                }}
+              />
+            </div>
+            <div className="info">
+              <div className="nm">{p.name}</div>
+              <div className="ds">{p.summary}</div>
+            </div>
+            <div className="meta">
+              <div className="dist">{p.lat.toFixed(3)}</div>
+              <div className="stt">{p.lng.toFixed(3)}</div>
             </div>
           </div>
         ))}

@@ -31,7 +31,8 @@ export function speak(text, { onEnd, onError } = {}) {
   const u = new SpeechSynthesisUtterance(text)
   u.lang = 'ko-KR'
   if (koVoice) u.voice = koVoice
-  u.rate = 1.0
+  u.rate = 0.96
+  u.pitch = 1.12
   u.onend = () => onEnd && onEnd()
   u.onerror = (e) => onError && onError(e)
   window.speechSynthesis.speak(u)

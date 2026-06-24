@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useStore } from '../store.jsx'
 import { placeById } from '../data/places.js'
+import { interestById } from '../data/interests.js'
 import { STAMP_RADIUS_M } from '../config.js'
 import { distanceM, watchPosition } from '../services/geo.js'
 import { speak, stopSpeak, ttsSupported } from '../services/tts.js'
@@ -17,7 +18,6 @@ export default function Play() {
   const [current, setCurrent] = useState(null)
   const [playing, setPlaying] = useState(false)
   const [msg, setMsg] = useState('')
-  const stopRef = useRef(null)
 
   useEffect(() => {
     const stop = watchPosition(
@@ -31,20 +31,13 @@ export default function Play() {
   }, [])
 
   if (!trip) {
-    return (
-      <div className="play">
-        <p style={{ padding: 20 }}>여행을 찾을 수 없습니다.</p>
-      </div>
-    )
+    return <div className="page"><p>여행을 찾을 수 없습니다.</p></div>
   }
 
   const point = trip.routePoints[active]
   const place = point ? placeById(point.placeId) : null
-
-  function nearActive() {
-    if (!current || !place) return false
-    return distanceM(current, place) <= STAMP_RADIUS_M
-  }
+  const interest = interestById(trip.interestId)
+  const near = current && place && distanceM(current, place) <= STAMP_RADIUS_M
 
   function onPlay() {
     if (!point?.story) return
@@ -54,11 +47,10 @@ export default function Play() {
     }
     setPlaying(true)
     setMsg('')
-    stopRef.current = speak(point.story.text, {
+    speak(point.story.text, {
       onEnd: () => {
         setPlaying(false)
-        // 스탬프 획득 조건: 해당 지역(100m)에서 TTS 재생 완료
-        if (nearActive()) {
+        if (near) {
           acquireStamp(place.id, { storyPlayed: true })
           setMsg(`🏅 ${place.name} 스탬프 획득!`)
         } else {
@@ -77,7 +69,6 @@ export default function Play() {
     setPlaying(false)
   }
 
-  // 데모용: 현위치를 활성 지점으로 이동(시뮬레이션)
   function simHere() {
     if (place) {
       setCurrent({ lat: place.lat, lng: place.lng })
@@ -89,29 +80,30 @@ export default function Play() {
     const pl = placeById(p.placeId)
     return { lat: pl.lat, lng: pl.lng, name: pl.name }
   })
-
   const stamped = state.stamps[place?.id]?.storyPlayed
 
   return (
     <div className="play">
       <div className="play-top">
-        <button className="btn-back over" onClick={() => navigate('/trips')}>← 종료</button>
+        <button className="pl-back over" onClick={() => navigate('/trips')}>←</button>
+        {near && <span className="arrived-tag over-r">도착</span>}
         <KakaoMap points={mapPoints} current={current} activeIndex={active} height="100%" />
       </div>
 
       <div className="play-bottom">
-        <div className="play-tabs">
+        <div className="pl-hero">
+          <div className="where">{interest?.emoji} {interest?.label}의 관점</div>
+          <h2 className="serif">{place?.name}{stamped && ' 🏅'}</h2>
+        </div>
+
+        <div className="pl-tabs">
           {trip.routePoints.map((p, i) => {
             const pl = placeById(p.placeId)
             return (
               <button
                 key={p.id}
-                className={`play-tab ${i === active ? 'sel' : ''}`}
-                onClick={() => {
-                  onStop()
-                  setActive(i)
-                  setMsg('')
-                }}
+                className={`ptab ${i === active ? 'on' : ''}`}
+                onClick={() => { onStop(); setActive(i); setMsg('') }}
               >
                 {i + 1}. {pl.name}
                 {state.stamps[p.placeId]?.storyPlayed && ' 🏅'}
@@ -120,34 +112,37 @@ export default function Play() {
           })}
         </div>
 
-        {place && (
-          <div className="play-story">
-            <img
-              src={point.story?.visuals?.[0] || place.image}
-              alt={place.name}
-              onError={(e) => (e.currentTarget.style.display = 'none')}
-            />
-            <h3>
-              {place.name} {stamped && <span className="badge">획득</span>}
-            </h3>
-            <p className="story-text">{point.story?.text || '아직 이야기가 없습니다.'}</p>
-
-            <div className="play-controls">
-              {!playing ? (
-                <button className="btn-primary" onClick={onPlay} disabled={!point.story}>
-                  ▶ 음성 재생
-                </button>
-              ) : (
-                <button className="btn-outline" onClick={onStop}>⏹ 정지</button>
+        <div className="player-scroll">
+          {place && (
+            <div className="player-card">
+              {point.story && (
+                <span className="verified">
+                  ✓ {point.story.generatedByAI ? 'AI 생성 · 사료 기반' : '사료 기반'}
+                </span>
               )}
-              <button className="btn-ghost" onClick={simHere}>📍 여기로(시뮬)</button>
-              <span className="dist">
-                {current && place ? `${Math.round(distanceM(current, place))}m` : '위치 확인 중'}
-              </span>
+              <img
+                src={point.story?.visuals?.[0] || place.image}
+                alt={place.name}
+                onError={(e) => (e.currentTarget.style.display = 'none')}
+              />
+              <div className="script">{point.story?.text || '아직 이야기가 없습니다.'}</div>
+
+              <div className="pctrl">
+                <button className="sm" onClick={simHere}>📍</button>
+                {!playing ? (
+                  <button className="playbtn" onClick={onPlay} disabled={!point.story}>▶</button>
+                ) : (
+                  <button className="playbtn" onClick={onStop}>⏹</button>
+                )}
+                <span className="sm dist-t">
+                  {current && place ? `${Math.round(distanceM(current, place))}m` : '…'}
+                </span>
+              </div>
+              <div className="tts-hint">▶ 재생을 누르면 기기 음성으로 이야기를 읽어드려요</div>
+              {msg && <p className="note center">{msg}</p>}
             </div>
-            {msg && <p className="note">{msg}</p>}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
