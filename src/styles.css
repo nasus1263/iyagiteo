@@ -29,56 +29,41 @@ body {
 }
 .serif { font-family: 'Gowun Batang', 'Nanum Myeongjo', serif; }
 
-/* ---------- frame ---------- */
-.stage {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 18px;
-}
-.phone {
-  width: 390px;
-  max-width: 100%;
-  height: 812px;
-  max-height: 100%;
+/* ---------- app shell (웹페이지, 모바일 폭 중앙 정렬) ---------- */
+.app-root {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  height: 100vh;
+  height: 100dvh;
   position: relative;
-  border-radius: 46px;
-  background: #0d141a;
-  padding: 13px;
-  box-shadow: var(--shadow);
-}
-.dancheong-strip {
-  position: absolute;
-  top: 13px; left: 13px; right: 13px;
-  height: 6px; z-index: 6;
-  border-radius: 6px 6px 0 0;
-  background: linear-gradient(90deg, var(--cheong) 0 25%, var(--dancheong) 25% 50%, var(--brass) 50% 75%, var(--cheong-deep) 75% 100%);
-  opacity: 0.92;
-}
-.screen {
-  position: absolute; inset: 13px;
-  border-radius: 34px;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   background-color: var(--hanji);
   background-image: linear-gradient(rgba(247, 239, 221, 0.2), rgba(231, 217, 189, 0.3)), var(--grain);
   background-size: cover, 200px 200px;
+  box-shadow: 0 0 60px -30px rgba(34, 48, 60, 0.4);
 }
-.notch {
-  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 150px; height: 24px; background: #0d141a; border-radius: 0 0 18px 18px; z-index: 7;
-}
-.statusbar {
-  height: 42px; flex-shrink: 0;
-  display: flex; align-items: flex-end; justify-content: space-between;
-  padding: 0 26px 6px; font-size: 12px; font-weight: 600;
-}
-.statusbar .dots { display: flex; gap: 4px; align-items: center; }
-.statusbar .dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.app-root > * { min-height: 0; }
 
 .scroll { flex: 1; overflow-y: auto; overflow-x: hidden; }
+.scroll::-webkit-scrollbar { width: 0; }
+
+/* ---------- fixed appbar (항상 표시) ---------- */
+.appbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 13px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 2px 8px -6px rgba(34, 48, 60, 0.3);
+  z-index: 5;
+}
+.appbar-brand { font-size: 18px; font-weight: 700; color: var(--dancheong); letter-spacing: 0.01em; }
+.appbar-sub { font-size: 12px; color: var(--ink-soft); }
 .scroll::-webkit-scrollbar { width: 0; }
 
 /* ---------- buttons ---------- */
@@ -172,6 +157,10 @@ body {
 }
 .chip.pick { cursor: pointer; background: var(--surface); border-color: var(--line); color: var(--ink-soft); }
 .chip.pick.on { background: #eaf3ef; border-color: var(--cheong); color: var(--cheong-deep); }
+.chip.tap { cursor: pointer; font: inherit; font-size: 11.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+.chip.tap:active { transform: scale(0.96); }
+.chip-edit { opacity: 0.6; font-size: 10px; }
+.chip.muted { background: var(--surface); border-color: var(--line); color: var(--ink-soft); }
 
 /* ---------- home / places ---------- */
 .topbar { padding: 6px 20px 12px; }
@@ -237,7 +226,7 @@ body {
 .badge { display: inline-block; margin-left: 6px; background: var(--brass); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 7px; font-weight: 700; }
 
 /* ---------- play ---------- */
-.play { height: 100%; display: flex; flex-direction: column; background: var(--ink); }
+.play { flex: 1; min-height: 0; display: flex; flex-direction: column; background: var(--ink); }
 .play-top { height: 36%; min-height: 200px; position: relative; flex-shrink: 0; }
 .pl-back.over, .arrived-tag.over-r {
   position: absolute; z-index: 10; top: 10px;
@@ -276,8 +265,11 @@ body {
   border: 1px solid #cfe3db; margin-bottom: 12px;
 }
 .player .st-title { font-size: 20px; font-weight: 700; line-height: 1.4; margin-bottom: 12px; }
-.wave { display: flex; align-items: center; gap: 3px; height: 46px; margin: 6px 0 4px; }
-.wave i { flex: 1; background: var(--line); border-radius: 3px; transition: background 0.2s; }
+.wave {
+  display: flex; align-items: center; gap: 3px; height: 46px; margin: 6px 0 4px;
+  cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.wave i { flex: 1; background: var(--line); border-radius: 3px; transition: background 0.15s; pointer-events: none; }
 .wave i.on { background: var(--cheong); }
 .ptime { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-soft); font-variant-numeric: tabular-nums; margin-top: 2px; }
 .pctrl { display: flex; align-items: center; justify-content: center; gap: 26px; margin: 14px 0 4px; }
@@ -357,10 +349,6 @@ body {
 .map-me { background: var(--cheong); color: #fff; border-radius: 999px; padding: 3px 9px; font-size: 11px; font-weight: 700; box-shadow: 0 0 0 4px rgba(30, 111, 92, 0.25); }
 .map-fallback { display: flex; align-items: center; justify-content: center; background: #ece5d6; color: var(--ink-soft); font-size: 13px; text-align: center; padding: 16px; }
 
-@media (max-width: 430px) {
-  .stage { padding: 0; }
-  .phone { width: 100%; height: 100%; max-height: 100%; border-radius: 0; padding: 0; }
-  .dancheong-strip { display: none; }
-  .screen { inset: 0; border-radius: 0; }
-  .notch { display: none; }
+@media (max-width: 480px) {
+  .app-root { box-shadow: none; }
 }

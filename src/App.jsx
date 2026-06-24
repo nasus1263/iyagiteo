@@ -8,19 +8,13 @@ import Stamps from './pages/Stamps.jsx'
 import Settings from './pages/Settings.jsx'
 import { useStore } from './store.jsx'
 
-function Statusbar() {
-  return (
-    <div className="statusbar">
-      <span>9:41</span>
-      <div className="dots"><span></span><span></span><span></span></div>
-    </div>
-  )
-}
-
 function Shell({ children }) {
   return (
     <>
-      <Statusbar />
+      <header className="appbar">
+        <span className="appbar-brand serif">이야기터</span>
+        <span className="appbar-sub">전주 한옥마을</span>
+      </header>
       <div className="scroll">{children}</div>
       <nav className="nav">
         <NavLink to="/places" className="navbtn">
@@ -45,37 +39,31 @@ export default function App() {
   const onboarded = !!state.interestId
 
   return (
-    <div className="stage">
-      <div className="phone">
-        <div className="dancheong-strip" />
-        <div className="screen">
-          <div className="notch" />
-          <Routes>
-            <Route path="/onboarding" element={<><Statusbar /><Onboarding /></>} />
-            <Route path="/play/:tripId" element={<Play />} />
-            <Route
-              path="*"
-              element={
-                onboarded ? (
-                  <Shell>
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/places" replace />} />
-                      <Route path="/places" element={<Places />} />
-                      <Route path="/trips" element={<Trips />} />
-                      <Route path="/trips/:tripId" element={<TripEdit />} />
-                      <Route path="/stamps" element={<Stamps />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="*" element={<Navigate to="/places" replace />} />
-                    </Routes>
-                  </Shell>
-                ) : (
-                  <Navigate to="/onboarding" replace />
-                )
-              }
-            />
-          </Routes>
-        </div>
-      </div>
+    <div className="app-root">
+      <Routes>
+        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/play/:tripId" element={<Play />} />
+        <Route
+          path="*"
+          element={
+            onboarded ? (
+              <Shell>
+                <Routes>
+                  <Route path="/" element={<Navigate to="/places" replace />} />
+                  <Route path="/places" element={<Places />} />
+                  <Route path="/trips" element={<Trips />} />
+                  <Route path="/trips/:tripId" element={<TripEdit />} />
+                  <Route path="/stamps" element={<Stamps />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="*" element={<Navigate to="/places" replace />} />
+                </Routes>
+              </Shell>
+            ) : (
+              <Navigate to="/onboarding" replace />
+            )
+          }
+        />
+      </Routes>
     </div>
   )
 }

@@ -1,9 +1,11 @@
+import { useNavigate } from 'react-router-dom'
 import { PLACES } from '../data/places.js'
 import { interestById } from '../data/interests.js'
 import { useStore } from '../store.jsx'
 
 export default function Places() {
   const { state } = useStore()
+  const navigate = useNavigate()
   const interest = interestById(state.interestId)
 
   return (
@@ -14,8 +16,10 @@ export default function Places() {
           <small>같은 장소, 당신의 관심사로 다시 듣기</small>
         </div>
         <div className="chips">
-          {interest && <span className="chip">{interest.emoji} {interest.label}</span>}
-          <span className="chip">⏱ {state.durationMin}분</span>
+          <button className="chip tap" onClick={() => navigate('/onboarding')}>
+            {interest ? `${interest.emoji} ${interest.label}` : '관심사 선택'} <span className="chip-edit">✎</span>
+          </button>
+          <span className="chip muted">⏱ {state.durationMin}분</span>
         </div>
       </div>
 
@@ -35,10 +39,6 @@ export default function Places() {
             <div className="info">
               <div className="nm">{p.name}</div>
               <div className="ds">{p.summary}</div>
-            </div>
-            <div className="meta">
-              <div className="dist">{p.lat.toFixed(3)}</div>
-              <div className="stt">{p.lng.toFixed(3)}</div>
             </div>
           </div>
         ))}

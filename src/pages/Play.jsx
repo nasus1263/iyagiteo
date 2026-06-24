@@ -14,8 +14,8 @@ const fmt = (sec) => {
   const s = Math.floor(sec % 60)
   return `${m}:${String(s).padStart(2, '0')}`
 }
-// 텍스트 길이로 대략 재생 길이(초) 추정
 const estSec = (text) => Math.max(8, Math.round((text?.length || 0) * 0.18))
+const clamp = (v) => Math.max(0, Math.min(100, v))
 
 export default function Play() {
   const { tripId } = useParams()
@@ -29,6 +29,9 @@ export default function Play() {
   const [progress, setProgress] = useState(0) // 0~100
   const [msg, setMsg] = useState('')
   const timerRef = useRef(null)
+  const waveRef = useRef(null)
+  const seekingRef = useRef(false)
+  const wasPlayingRef = useRef(false)
 
   useEffect(() => {
     const stop = watchPosition(
@@ -59,14 +62,6 @@ export default function Play() {
     timerRef.current = null
   }
 
-  function goPoint(i) {
-    if (i < 0 || i >= trip.routePoints.length) return
-    onStop()
-    setActive(i)
-    setProgress(0)
-    setMsg('')
-  }
-
   function finish() {
     clearTimer()
     setPlaying(false)
@@ -79,15 +74,17 @@ export default function Play() {
     }
   }
 
-  function onPlay() {
+  // fromPct 지점부터 재생 (TTS는 해당 지점 이후 텍스트를 다시 읽음)
+  function play(fromPct) {
     if (!point?.story) return
+    const start = clamp(fromPct)
     setMsg('')
     setPlaying(true)
-    if (progress >= 100) setProgress(0)
+    setProgress(start)
 
     const useTTS = ttsSupported()
     const durMs = useTTS ? Math.max(6000, text.length * 180) : Math.max(3500, text.length * 120)
-    const cap = useTTS ? 96 : 100 // TTS는 onend까지 96%에서 대기
+    const cap = useTTS ? 96 : 100
     const step = 90
     const inc = 100 / (durMs / step)
 
@@ -104,17 +101,57 @@ export default function Play() {
     }, step)
 
     if (useTTS) {
-      speak(text, {
+      const offset = Math.floor((start / 100) * text.length)
+      speak(text.slice(offset), {
         onEnd: () => finish(),
         onError: () => { clearTimer(); setPlaying(false); setMsg('재생 중 오류가 발생했습니다.') },
       })
     }
   }
 
-  function onStop() {
+  function pause() {
     stopSpeak()
     clearTimer()
     setPlaying(false)
+  }
+
+  function toggle() {
+    if (playing) pause()
+    else play(progress >= 100 ? 0 : progress)
+  }
+
+  function goPoint(i) {
+    if (i < 0 || i >= trip.routePoints.length) return
+    pause()
+    setActive(i)
+    setProgress(0)
+    setMsg('')
+  }
+
+  // ---- seek (클릭/드래그) ----
+  function pctFromEvent(e) {
+    const el = waveRef.current
+    if (!el) return 0
+    const rect = el.getBoundingClientRect()
+    return clamp(((e.clientX - rect.left) / rect.width) * 100)
+  }
+  function onSeekDown(e) {
+    if (!point?.story) return
+    e.currentTarget.setPointerCapture(e.pointerId)
+    seekingRef.current = true
+    wasPlayingRef.current = playing
+    pause()
+    setProgress(pctFromEvent(e))
+  }
+  function onSeekMove(e) {
+    if (seekingRef.current) setProgress(pctFromEvent(e))
+  }
+  function onSeekUp(e) {
+    if (!seekingRef.current) return
+    seekingRef.current = false
+    const p = pctFromEvent(e)
+    setProgress(p)
+    if (wasPlayingRef.current && p < 100) play(p)
   }
 
   function simHere() {
@@ -168,7 +205,17 @@ export default function Play() {
                 </span>
                 <div className="st-title serif">{place.name}</div>
 
-                <div className="wave">
+                <div
+                  className="wave"
+                  ref={waveRef}
+                  onPointerDown={onSeekDown}
+                  onPointerMove={onSeekMove}
+                  onPointerUp={onSeekUp}
+                  onPointerCancel={onSeekUp}
+                  role="slider"
+                  aria-label="재생 위치"
+                  aria-valuenow={Math.round(progress)}
+                >
                   {Array.from({ length: WAVE_BARS }).map((_, i) => {
                     const on = (i / WAVE_BARS) * 100 <= progress
                     const h = 30 + Math.abs(Math.sin(i * 1.3)) * 60
@@ -182,12 +229,12 @@ export default function Play() {
 
                 <div className="pctrl">
                   <button className="sm" onClick={() => goPoint(active - 1)} disabled={active === 0}>⏮</button>
-                  <button className="playbtn" onClick={() => (playing ? onStop() : onPlay())} disabled={!point.story}>
+                  <button className="playbtn" onClick={toggle} disabled={!point.story}>
                     {playing ? '❚❚' : '▶'}
                   </button>
                   <button className="sm" onClick={() => goPoint(active + 1)} disabled={active === trip.routePoints.length - 1}>⏭</button>
                 </div>
-                <div className="tts-hint">▶ 재생을 누르면 기기 음성으로 이야기를 읽어드려요</div>
+                <div className="tts-hint">파형을 누르거나 끌어 재생 위치를 바꿀 수 있어요</div>
               </div>
 
               <img
