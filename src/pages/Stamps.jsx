@@ -2,10 +2,13 @@ import { PLACES } from '../data/places.js'
 import { useStore } from '../store.jsx'
 import Mascot from '../components/Mascot.jsx'
 
+// 스탬프 대상: 관광지 카테고리(내장된 스탬프 획득 가능 지역)
+const STAMP_PLACES = PLACES.filter((p) => p.category === '관광지')
+
 export default function Stamps() {
   const { state } = useStore()
-  const got = PLACES.filter((p) => state.stamps[p.id]?.storyPlayed).length
-  const pct = Math.round((got / PLACES.length) * 100)
+  const got = STAMP_PLACES.filter((p) => state.stamps[p.id]?.storyPlayed).length
+  const pct = Math.round((got / STAMP_PLACES.length) * 100)
 
   return (
     <div className="page">
@@ -24,14 +27,14 @@ export default function Stamps() {
       <div className="dogam">
         <div className="top">
           <span className="t">한옥마을 스탬프</span>
-          <span className="n">{got} / {PLACES.length}</span>
+          <span className="n">{got} / {STAMP_PLACES.length}</span>
         </div>
         <div className="bar"><i style={{ width: `${pct}%` }} /></div>
       </div>
 
       <div className="rec-sec">🏅 모은 스탬프</div>
       <div className="stampgrid">
-        {PLACES.map((p) => {
+        {STAMP_PLACES.map((p) => {
           const done = state.stamps[p.id]?.storyPlayed
           return (
             <div key={p.id} className={`sstamp ${done ? 'got' : 'lock'}`}>

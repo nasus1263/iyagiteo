@@ -85,7 +85,7 @@ body {
   box-shadow: 0 10px 22px -12px rgba(30, 111, 92, 0.8);
 }
 .btn-primary:disabled { background: #ccc3ae; box-shadow: none; }
-.btn-primary.big { width: 100%; margin-top: 18px; padding: 15px; border-radius: 16px; }
+.btn-primary.big { display: flex; width: auto; margin: 18px 20px 0; padding: 15px; border-radius: 16px; }
 .btn-outline {
   background: transparent; border: 1.5px solid var(--cheong); color: var(--cheong-deep);
   border-radius: 14px; padding: 11px 14px; font: inherit; font-weight: 600; cursor: pointer;
@@ -190,6 +190,21 @@ body {
 .place .meta { text-align: right; flex-shrink: 0; }
 .place .meta .dist { font-size: 12px; font-weight: 700; color: var(--cheong-deep); }
 .place .meta .stt { font-size: 10.5px; color: var(--ink-soft); margin-top: 2px; }
+
+/* 여행지 카테고리 + 펼침 상세 */
+.sec-h .cnt { font-size: 12px; color: var(--ink-soft); font-weight: 600; margin-left: 4px; }
+.place-wrap { display: flex; flex-direction: column; }
+.place { width: 100%; text-align: left; cursor: pointer; font: inherit; color: inherit; }
+.place.open { border-color: var(--cheong); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.place .chev { flex-shrink: 0; color: var(--ink-soft); font-size: 12px; align-self: center; }
+.place-detail {
+  border: 1px solid var(--cheong); border-top: none; border-radius: 0 0 16px 16px;
+  background: #fbf7ef; margin-top: -1px; padding: 6px 14px 12px; font-size: 12.5px;
+}
+.place-detail .frow { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+.place-detail .frow:last-child { border-bottom: none; }
+.place-detail dt { flex: 0 0 84px; color: var(--cheong-deep); font-weight: 700; word-break: keep-all; }
+.place-detail dd { flex: 1; min-width: 0; color: var(--ink); line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
 
 /* ---------- trips ---------- */
 .trip-list { display: flex; flex-direction: column; gap: 10px; padding: 0 20px; margin-bottom: 18px; }
@@ -340,7 +355,7 @@ body {
 .field label { font-size: 14px; font-weight: 600; }
 .field input { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font: inherit; background: #fff; }
 .field small { color: var(--ink-soft); font-size: 12px; line-height: 1.45; }
-.page .btn-primary, .page .btn-outline { margin-left: 20px; }
+.page > .btn-primary, .page > .btn-outline { margin-left: 20px; margin-right: 20px; }
 
 /* ---------- map overlays ---------- */
 .map-pin {

@@ -201,7 +201,7 @@ export default function Play() {
             <>
               <div className="player">
                 <span className="verified">
-                  ✓ {point.story?.generatedByAI ? 'AI 생성 · 사료 기반' : '사료 기반'}
+                  ✓ {point.story?.generatedByAI ? 'AI 생성 · 자료 기반' : '자료 기반'}
                 </span>
                 <div className="st-title serif">{place.name}</div>
 
@@ -237,12 +237,6 @@ export default function Play() {
                 <div className="tts-hint">파형을 누르거나 끌어 재생 위치를 바꿀 수 있어요</div>
               </div>
 
-              <img
-                className="pl-image"
-                src={point.story?.visuals?.[0] || place.image}
-                alt={place.name}
-                onError={(e) => (e.currentTarget.style.display = 'none')}
-              />
               <div className="script">{text || '아직 이야기가 없습니다.'}</div>
 
               <div className="pl-foot">

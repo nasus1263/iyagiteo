@@ -1,28 +1,32 @@
-// 테마 코스 템플릿 — 사전 생성된 세션 데이터(mock). 추후 TourAPI로 확장.
+// 테마 코스 템플릿(mock) — xlsx 여행지(관광지 카테고리)에서 동적으로 구성.
+import { PLACES } from './places.js'
+
+const tour = PLACES.filter((p) => p.category === '관광지')
+
 export const TEMPLATES = [
   {
-    id: 'joseon-start',
-    name: '조선 왕조의 시작',
+    id: 't1',
+    name: '관광지 핵심 코스',
+    interestId: 'history',
+    durationMin: 120,
+    placeIds: tour.slice(0, 3).map((p) => p.id),
+    desc: '전주 대표 관광지 3곳',
+  },
+  {
+    id: 't2',
+    name: '더 둘러보기',
     interestId: 'royal',
-    durationMin: 120,
-    placeIds: ['gyeonggijeon', 'omokdae', 'pungnammun'],
-    desc: '태조 이성계의 자취를 따라 걷는 코스',
+    durationMin: 150,
+    placeIds: tour.slice(3, 6).map((p) => p.id),
+    desc: '관광지 추가 코스',
   },
   {
-    id: 'modern-jeonju',
-    name: '근대의 전주',
-    interestId: 'modern',
-    durationMin: 90,
-    placeIds: ['jeondong', 'pungnammun', 'hyanggyo'],
-    desc: '순교지와 근대 건축, 옛 성문을 잇는 코스',
-  },
-  {
-    id: 'photo-spots',
-    name: '인생샷 한 바퀴',
+    id: 't3',
+    name: '하루 한 바퀴',
     interestId: 'drama',
-    durationMin: 120,
-    placeIds: ['gyeonggijeon', 'hyanggyo', 'omokdae'],
-    desc: '촬영지·포토스팟 위주로 도는 코스',
+    durationMin: 180,
+    placeIds: tour.slice(6, 10).map((p) => p.id),
+    desc: '여유롭게 도는 관광지 코스',
   },
 ]
 

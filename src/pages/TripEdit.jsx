@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useStore } from '../store.jsx'
 import { PLACES, placeById } from '../data/places.js'
 import { interestById } from '../data/interests.js'
-import { getSources } from '../data/sources.js'
 import { generateStory } from '../services/claude.js'
 import KakaoMap from '../components/KakaoMap.jsx'
 
@@ -24,7 +23,8 @@ export default function TripEdit() {
     return { lat: pl.lat, lng: pl.lng, name: pl.name }
   })
   const usedIds = new Set(trip.routePoints.map((p) => p.placeId))
-  const available = PLACES.filter((p) => !usedIds.has(p.id))
+  // 장소 추가는 관광지 카테고리로 한정(목록이 197곳이라 과다)
+  const available = PLACES.filter((p) => p.category === '관광지' && !usedIds.has(p.id))
 
   async function generateAll() {
     if (trip.routePoints.length === 0) return
@@ -32,19 +32,17 @@ export default function TripEdit() {
     let aiCount = 0
     for (const point of trip.routePoints) {
       const place = placeById(point.placeId)
-      const sources = getSources(point.placeId, trip.interestId)
       setNote(`${place.name} 이야기 생성 중…`)
-      const story = await generateStory({ place, interest, sources, extraPrompt: prompt })
+      const story = await generateStory({ place, interest, extraPrompt: prompt })
       if (story.generatedByAI) aiCount++
-      // 시각 자료(mock): 장소 이미지를 관련 자료로 사용. 추후 AI 검색으로 교체.
       setStory(trip.id, point.id, {
         text: story.text,
-        visuals: [place.image],
+        visuals: [],
         generatedByAI: story.generatedByAI,
       })
     }
     setBusy(false)
-    setNote(`완료 (AI 생성 ${aiCount}/${trip.routePoints.length}). 나머지는 사료 기반 폴백.`)
+    setNote(`완료 (AI 생성 ${aiCount}/${trip.routePoints.length}). 나머지는 자료 기반 폴백.`)
   }
 
   const allHaveStory = trip.routePoints.length > 0 && trip.routePoints.every((p) => p.story)
