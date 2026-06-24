@@ -61,7 +61,7 @@ export default function Settings() {
           onChange={(e) => setGoogle(e.target.value)}
           placeholder="AIza..."
         />
-        <small>여행지 사진에 사용. Places API (New) 활성화 + 웹사이트 도메인 referrer 허용 필요.</small>
+        <small>여행지 사진에 사용. Google Cloud에서 <b>Places API (New)</b> + <b>Maps JavaScript API</b> 둘 다 활성화하고, 키의 HTTP referrer에 이 사이트 도메인을 허용하세요.</small>
       </div>
 
       <button className="btn-primary" onClick={save}>저장</button>

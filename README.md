@@ -29,8 +29,9 @@ npm run dev
 
 - **Kakao 키 없음** → 지도 자리에 안내 문구 (나머지 기능은 동작)
 - **Anthropic 키 없음** → 자료 기반 폴백 대본 사용
-- **Google Places(New) 키 없음** → 여행지 사진 대신 카테고리 이모지 표시
-  - Places API (New) 활성화 + HTTP referrer 제한(localhost·Pages 도메인) 권장. 사진은 장소명 텍스트 검색(+좌표 bias)으로 조회, photoName을 localStorage에 캐시.
+- **Google 키 없음** → 여행지 사진 대신 카테고리 이모지 표시
+  - 사진은 **Maps JS Places 라이브러리**(`Place.searchByText` → `photo.getURI`)로 조회(REST는 브라우저 CORS로 막힘). 장소명+좌표 bias로 검색, 결과 URL을 localStorage 캐시.
+  - 키에 **Places API (New)** + **Maps JavaScript API** 둘 다 활성화하고 HTTP referrer(localhost·Pages 도메인) 허용 필요.
 
 > 백엔드가 없어 API 키가 브라우저에 노출된다. **프로토타입 한정**이며 실서비스 시 서버 프록시 필요.
 
