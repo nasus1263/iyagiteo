@@ -162,6 +162,12 @@ export default function Play() {
     }
   }
 
+  function stampHere() {
+    if (!near || !place) return
+    acquireStamp(place.id, { storyPlayed: true })
+    setMsg(`🏅 ${place.name} 스탬프 획득!`)
+  }
+
   const mapPoints = trip.routePoints
     .map((p) => placeById(p.placeId))
     .filter(Boolean)
@@ -240,6 +246,18 @@ export default function Play() {
               </div>
 
               <div className="script">{text || '아직 이야기가 없습니다.'}</div>
+
+              <div className="stamp-cta">
+                {stamped ? (
+                  <button className="btn-primary big stamp-btn" disabled>🏅 스탬프 획득 완료</button>
+                ) : near ? (
+                  <button className="btn-primary big stamp-btn" onClick={stampHere}>🏅 스탬프 찍기</button>
+                ) : (
+                  <button className="btn-primary big stamp-btn" disabled>
+                    🔒 근처(100m)에 가면 스탬프를 찍을 수 있어요
+                  </button>
+                )}
+              </div>
 
               <div className="pl-foot">
                 <span className="dist-t">
