@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useStore } from '../store.jsx'
-import { placeById } from '../data/places.js'
+import { PLACES, placeById } from '../data/places.js'
 import { interestById } from '../data/interests.js'
 import { repPlaces } from '../data/representative.js'
 import { generateStory } from '../services/claude.js'
@@ -25,8 +25,10 @@ export default function TripEdit() {
     .filter(Boolean)
     .map((pl) => ({ lat: pl.lat, lng: pl.lng, name: pl.name }))
   const usedIds = new Set(trip.routePoints.map((p) => p.placeId))
-  // 장소 추가 = 이 여행 흥미의 대표 여행지 중 아직 안 담은 곳
-  const available = repPlaces(trip.interestId).filter((p) => !usedIds.has(p.id))
+  // 장소 추가 = 흥미 대표 여행지(상단) + 전체 여행지. 이미 담은 곳 제외.
+  const reps = repPlaces(trip.interestId).filter((p) => !usedIds.has(p.id))
+  const repIds = new Set(reps.map((p) => p.id))
+  const others = PLACES.filter((p) => !usedIds.has(p.id) && !repIds.has(p.id))
 
   async function generateAll() {
     if (trip.routePoints.length === 0) return
@@ -86,16 +88,27 @@ export default function TripEdit() {
         })}
       </ol>
 
-      {available.length > 0 && (
+      {(reps.length > 0 || others.length > 0) && (
         <>
           <h3>장소 추가</h3>
-          <div className="chip-row wrap">
-            {available.map((p) => (
-              <button key={p.id} className="chip" onClick={() => addPoint(trip.id, p.id)}>
-                + {p.name}
-              </button>
-            ))}
-          </div>
+          {reps.length > 0 && (
+            <div className="chip-row wrap">
+              {reps.map((p) => (
+                <button key={p.id} className="chip rep" onClick={() => addPoint(trip.id, p.id)}>
+                  ⭐ {p.name}
+                </button>
+              ))}
+            </div>
+          )}
+          {others.length > 0 && (
+            <div className="chip-row wrap" style={{ marginTop: reps.length ? 8 : 0 }}>
+              {others.map((p) => (
+                <button key={p.id} className="chip" onClick={() => addPoint(trip.id, p.id)}>
+                  + {p.name}
+                </button>
+              ))}
+            </div>
+          )}
         </>
       )}
 

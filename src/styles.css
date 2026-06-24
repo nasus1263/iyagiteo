@@ -253,6 +253,7 @@ body {
 .chip-row { display: flex; gap: 8px; padding: 0 20px; }
 .chip-row.wrap { flex-wrap: wrap; }
 .chip-row .chip { cursor: pointer; }
+.chip-row .chip.rep { background: #eaf3ef; border-color: var(--cheong); color: var(--cheong-deep); }
 .badge { display: inline-block; margin-left: 6px; background: var(--brass); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 7px; font-weight: 700; }
 
 /* ---------- play ---------- */
