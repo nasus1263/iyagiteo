@@ -162,10 +162,10 @@ export default function Play() {
     }
   }
 
-  const mapPoints = trip.routePoints.map((p) => {
-    const pl = placeById(p.placeId)
-    return { lat: pl.lat, lng: pl.lng, name: pl.name }
-  })
+  const mapPoints = trip.routePoints
+    .map((p) => placeById(p.placeId))
+    .filter(Boolean)
+    .map((pl) => ({ lat: pl.lat, lng: pl.lng, name: pl.name }))
 
   return (
     <div className="play">
@@ -191,7 +191,7 @@ export default function Play() {
                   className={`ptab ${i === active ? 'on' : ''}`}
                   onClick={() => goPoint(i)}
                 >
-                  {i + 1}. {pl.name}
+                  {i + 1}. {pl?.name || '삭제된 장소'}
                   {state.stamps[p.placeId]?.storyPlayed && ' 🏅'}
                 </button>
               )

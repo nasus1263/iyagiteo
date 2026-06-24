@@ -19,10 +19,10 @@ export default function TripEdit() {
   if (!trip) return <div className="page"><p>여행을 찾을 수 없습니다.</p></div>
 
   const interest = interestById(trip.interestId)
-  const mapPoints = trip.routePoints.map((p) => {
-    const pl = placeById(p.placeId)
-    return { lat: pl.lat, lng: pl.lng, name: pl.name }
-  })
+  const mapPoints = trip.routePoints
+    .map((p) => placeById(p.placeId))
+    .filter(Boolean)
+    .map((pl) => ({ lat: pl.lat, lng: pl.lng, name: pl.name }))
   const usedIds = new Set(trip.routePoints.map((p) => p.placeId))
   // 장소 추가는 관광지 카테고리로 한정(목록이 197곳이라 과다)
   const available = PLACES.filter((p) => p.category === '관광지' && !usedIds.has(p.id))
@@ -33,6 +33,7 @@ export default function TripEdit() {
     let aiCount = 0
     for (const point of trip.routePoints) {
       const place = placeById(point.placeId)
+      if (!place) continue
       setNote(`${place.name} 이야기 생성 중…`)
       const story = await generateStory({ place, interest, extraPrompt: prompt })
       if (story.generatedByAI) aiCount++
@@ -63,6 +64,14 @@ export default function TripEdit() {
       <ol className="point-list">
         {trip.routePoints.map((p) => {
           const pl = placeById(p.placeId)
+          if (!pl) {
+            return (
+              <li key={p.id}>
+                <div className="pt-info"><b>삭제된 장소</b></div>
+                <button className="btn-ghost danger" onClick={() => removePoint(trip.id, p.id)}>제거</button>
+              </li>
+            )
+          }
           return (
             <li key={p.id}>
               <div className="pt-thumb"><PlacePhoto place={pl} px={96} className="thumb-img" /></div>
