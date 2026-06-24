@@ -50,6 +50,7 @@ export default function Trips() {
       <div className="trip-list">
         {state.trips.map((t) => (
           <div className="trip-card" key={t.id}>
+            <div className="trip-icon">{interestById(t.interestId)?.emoji || '🧭'}</div>
             <div onClick={() => navigate(`/trips/${t.id}`)} style={{ flex: 1 }}>
               <h3>{t.name}</h3>
               <p>{t.routePoints.length}개 동선 · {interestById(t.interestId)?.label}</p>

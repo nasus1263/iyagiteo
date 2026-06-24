@@ -212,6 +212,11 @@ body {
   background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
   padding: 12px 14px; display: flex; align-items: center; gap: 10px;
 }
+.trip-icon {
+  width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+  background: linear-gradient(160deg, #fbf5e8, #efe3c9); border: 1px solid var(--line);
+}
 .trip-card h3 { margin-bottom: 3px; font-size: 16px; font-family: 'Gowun Batang', serif; }
 .trip-card p { color: var(--ink-soft); font-size: 12px; }
 .trip-actions { display: flex; flex-direction: column; gap: 2px; }
