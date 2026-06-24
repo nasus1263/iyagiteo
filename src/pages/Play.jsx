@@ -8,6 +8,7 @@ import { distanceM, watchPosition } from '../services/geo.js'
 import { speak, stopSpeak, ttsSupported } from '../services/tts.js'
 import KakaoMap from '../components/KakaoMap.jsx'
 import PlacePhoto from '../components/PlacePhoto.jsx'
+import Seal from '../components/Seal.jsx'
 
 const WAVE_BARS = 28
 const fmt = (sec) => {
@@ -29,14 +30,16 @@ export default function Play() {
   const [playing, setPlaying] = useState(false)
   const [progress, setProgress] = useState(0) // 0~100
   const [msg, setMsg] = useState('')
+  const [modalPlace, setModalPlace] = useState(null) // 스탬프 획득 모달
   const timerRef = useRef(null)
   const waveRef = useRef(null)
   const seekingRef = useRef(false)
   const wasPlayingRef = useRef(false)
+  const simRef = useRef(false) // 시뮬레이션 시 실제 GPS 갱신 무시
 
   useEffect(() => {
     const stop = watchPosition(
-      (pos) => setCurrent(pos),
+      (pos) => { if (!simRef.current) setCurrent(pos) },
       () => setMsg('위치 권한이 없어 스탬프 거리 판정이 제한됩니다.')
     )
     return () => {
@@ -63,13 +66,20 @@ export default function Play() {
     timerRef.current = null
   }
 
+  // 스탬프 획득 + 찍기 효과 모달
+  function award() {
+    if (!place || stamped) return false
+    acquireStamp(place.id, { storyPlayed: true })
+    setModalPlace(place)
+    return true
+  }
+
   function finish() {
     clearTimer()
     setPlaying(false)
     setProgress(100)
     if (near) {
-      acquireStamp(place.id, { storyPlayed: true })
-      setMsg(`🏅 ${place.name} 스탬프 획득!`)
+      award()
     } else {
       setMsg('재생 완료. (스탬프는 해당 지역 100m 안에서 들어야 획득돼요)')
     }
@@ -157,15 +167,15 @@ export default function Play() {
 
   function simHere() {
     if (place) {
+      simRef.current = true
       setCurrent({ lat: place.lat, lng: place.lng })
       setMsg('현위치를 이 지점으로 설정(시뮬레이션).')
     }
   }
 
   function stampHere() {
-    if (!near || !place) return
-    acquireStamp(place.id, { storyPlayed: true })
-    setMsg(`🏅 ${place.name} 스탬프 획득!`)
+    if (!near) return
+    award()
   }
 
   const mapPoints = trip.routePoints
@@ -270,6 +280,23 @@ export default function Play() {
           )}
         </div>
       </div>
+
+      {modalPlace && (
+        <div className="modal show" onClick={() => setModalPlace(null)}>
+          <div className="stampcard" onClick={(e) => e.stopPropagation()}>
+            <div className="seal"><Seal mark={modalPlace.name} size={92} /></div>
+            <h3>스탬프를 찍었어요!</h3>
+            <p>
+              <b>{modalPlace.name}</b>의 이야기가
+              <br />‘스탬프 도감’에 저장됐어요.
+            </p>
+            <div className="row">
+              <button className="btn ghost" onClick={() => { setModalPlace(null); navigate('/stamps') }}>도감 보기</button>
+              <button className="btn" onClick={() => setModalPlace(null)}>계속</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
